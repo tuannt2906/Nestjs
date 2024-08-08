@@ -1,21 +1,27 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true,
-    "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "module": "commonjs",                 // Chế độ module CommonJS
+    "declaration": true,                  // Tạo file .d.ts
+    "removeComments": true,               // Loại bỏ các comment trong file output
+    "emitDecoratorMetadata": true,        // Phát sinh metadata cho decorators
+    "experimentalDecorators": true,       // Bật hỗ trợ decorators
+    "allowSyntheticDefaultImports": true, // Cho phép import mặc định từ module không có default export
+    "target": "ES2021",                   // Đặt mục tiêu phiên bản ECMAScript
+    "sourceMap": true,                    // Tạo source maps cho việc gỡ lỗi
+    "outDir": "./dist",                   // Thư mục output cho các file biên dịch
+    "baseUrl": "./",                      // Cơ sở để xác định các đường dẫn
+    "incremental": true,                  // Sử dụng incremental compilation
+    "skipLibCheck": true,                 // Bỏ qua kiểm tra type của các thư viện
+    "strictNullChecks": false,            // Bật kiểm tra null và undefined
+    "noImplicitAny": false,               // Tắt lỗi khi có biến không xác định kiểu
+    "strictBindCallApply": false,         // Tắt kiểm tra strict bind, call, apply
+    "forceConsistentCasingInFileNames": false, // Bắt buộc độ chính xác của tên file
+    "noFallthroughCasesInSwitch": false,  // Tắt cảnh báo khi không có `break` trong switch
+    "resolveJsonModule": true,            // Cho phép import JSON modules
+    "isolatedModules": true,              // Tạo các module đơn lẻ
+    "lib": ["ES2021", "DOM"],              // Các thư viện tiêu chuẩn để sử dụng
+    "paths": {
+      "*": ["src/*"]                      // Các đường dẫn alias
+    }
   }
 }
