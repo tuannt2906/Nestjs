@@ -36,21 +36,21 @@ export class UserController {
     }
   }
 
-  @Put('/:id')
-  updateUser(@Body() userDTO: UserDTO, @Param('id') id: number): ResponseData<User> {
-    try {
-      return new ResponseData<User>(this.userService.updateUser(userDTO, id), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
-    } catch (error) {
-      return new ResponseData<User>(null, HttpStatus.ERROR, HttpMessage.ERROR);
-    }
-  }
+  // @Put('/:id')
+  // updateUser(@Body() userDTO: UserDTO, @Param('id') id: number): ResponseData<User> {
+  //   try {
+  //     return new ResponseData<User>(this.userService.updateUser(userDTO, id), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
+  //   } catch (error) {
+  //     return new ResponseData<User>(null, HttpStatus.ERROR, HttpMessage.ERROR);
+  //   }
+  // }
 
-  @Delete('/:id')
-  deleteUser(@Param('id') id: number): ResponseData<boolean> {
-    try {
-      return new ResponseData<boolean>(this.userService.deleteUser(id), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
-    } catch (error) {
-      return new ResponseData<boolean>(null, HttpStatus.ERROR, HttpMessage.ERROR);
-    }
-  }
+  // @Delete('/:id')
+  // deleteUser(@Param('id') id: number): ResponseData<boolean> {
+  //   try {
+  //     return new ResponseData<boolean>(this.userService.deleteUser(id), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
+  //   } catch (error) {
+  //     return new ResponseData<boolean>(null, HttpStatus.ERROR, HttpMessage.ERROR);
+  //   }
+  // }
 }
