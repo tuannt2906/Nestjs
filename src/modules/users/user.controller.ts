@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ResponseData } from 'modules/global/globalClass';
 import { HttpStatus, HttpMessage } from 'modules/global/globalEnum';
@@ -17,11 +17,6 @@ export class UserController {
     }
   }
 
-  @Get('/check-health')
-  checkHealth(): string {
-    return 'Ok';
-  }
-
   @Post()
   createUser(): ResponseData<string> {
     try {
@@ -32,11 +27,11 @@ export class UserController {
   }
 
   @Get('/:id')
-  detailUser(): ResponseData<string> {
+  detailUser(@Param('id') id: number): ResponseData<User> {
     try {
-      return new ResponseData<string>(this.userService.detailUser(), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
+      return new ResponseData<User>(this.userService.detailUser(id), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
     } catch (error) {
-      return new ResponseData<string>(null, HttpStatus.ERROR, HttpMessage.ERROR);
+      return new ResponseData<User>(null, HttpStatus.ERROR, HttpMessage.ERROR);
     }
   }
 
