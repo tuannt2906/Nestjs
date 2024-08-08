@@ -1,8 +1,9 @@
-import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ResponseData } from 'modules/global/globalClass';
 import { HttpStatus, HttpMessage } from 'modules/global/globalEnum';
 import { User } from 'models/user.model';
+import { UserDTO } from 'dto/user.dto';
 
 @Controller('users')
 export class UserController {
@@ -18,11 +19,11 @@ export class UserController {
   }
 
   @Post()
-  createUser(): ResponseData<string> {
+  createUser(@Body(new ValidationPipe()) userDTO: UserDTO): ResponseData<UserDTO> {
     try {
-      return new ResponseData<string>(this.userService.createUser(), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
+      return new ResponseData<User>(this.userService.createUser(userDTO), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
     } catch (error) {
-      return new ResponseData<string>(null, HttpStatus.ERROR, HttpMessage.ERROR);
+      return new ResponseData<User>(null, HttpStatus.ERROR, HttpMessage.ERROR);
     }
   }
 
