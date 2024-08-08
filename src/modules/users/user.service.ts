@@ -43,11 +43,23 @@ export class UserService {
     return this.users.find(item => item.id === Number(id)) as User;
   }
 
-  updateUser(): string {
-    return 'Update user';
+  updateUser(userDTO: UserDTO, id: number): User {
+    const index = this.users.findIndex(item => item.id === Number(id));
+    this.users[index].username = userDTO.username;
+    this.users[index].password = userDTO.password;
+    this.users[index].email = userDTO.email;
+    this.users[index].gender = userDTO.gender;
+    this.users[index].phonenumber = userDTO.phonenumber;
+    this.users[index].age = userDTO.age;
+    return this.users[index];
   }
 
-  deleteUser(): string {
-    return 'Delete User';
+  deleteUser(id: number): boolean {
+    const index = this.users.findIndex(item => item.id === Number(id));
+    if (index !== -1) {
+      this.users.splice(index, 1);
+      return true;
+    }
+    return false;
   }
 }

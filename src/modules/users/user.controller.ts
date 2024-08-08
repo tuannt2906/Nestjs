@@ -37,20 +37,20 @@ export class UserController {
   }
 
   @Put('/:id')
-  updateUser(): ResponseData<string> {
+  updateUser(@Body() userDTO: UserDTO, @Param('id') id: number): ResponseData<User> {
     try {
-      return new ResponseData<string>(this.userService.updateUser(), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
+      return new ResponseData<User>(this.userService.updateUser(userDTO, id), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
     } catch (error) {
-      return new ResponseData<string>(null, HttpStatus.ERROR, HttpMessage.ERROR);
+      return new ResponseData<User>(null, HttpStatus.ERROR, HttpMessage.ERROR);
     }
   }
 
   @Delete('/:id')
-  deleteUser(): ResponseData<string> {
+  deleteUser(@Param('id') id: number): ResponseData<boolean> {
     try {
-      return new ResponseData<string>(this.userService.deleteUser(), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
+      return new ResponseData<boolean>(this.userService.deleteUser(id), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
     } catch (error) {
-      return new ResponseData<string>(null, HttpStatus.ERROR, HttpMessage.ERROR);
+      return new ResponseData<boolean>(null, HttpStatus.ERROR, HttpMessage.ERROR);
     }
   }
 }
