@@ -21,8 +21,8 @@ export class UserService {
     return 'Add Users';
   }
 
-  detailUser(): string {
-    return 'User Detail';
+  detailUser(id: number): User {
+    return this.users.find(item => item.id === Number(id)) as User;
   }
 
   updateUser(): string {
