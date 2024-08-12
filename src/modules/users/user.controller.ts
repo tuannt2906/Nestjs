@@ -5,24 +5,14 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
-  getUsers(): string {
-    return this.userService.getUsers();
-  }
-
   @Get('/check-health')
   checkHealth(): string {
     return 'Ok';
   }
 
-  @Post()
-  createUser(): string {
-    return this.userService.createUser();
-  }
-
-  @Get('/:id')
-  detailUser(): string {
-    return this.userService.detailUser();
+  @Get()
+  getUsers(): string {
+    return this.userService.getUsers();
   }
 
   @Put('/:id')
@@ -33,5 +23,15 @@ export class UserController {
   @Delete('/:id')
   deleteUser(): string {
     return this.userService.deleteUser();
+  }
+
+  @Get('/:id')
+  detailUser(): string {
+    return this.userService.detailUser();
+  }
+
+  @Post()
+  createUser(): string {
+    return this.userService.createUser();
   }
 }
