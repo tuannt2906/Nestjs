@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserDTO } from 'dto/user.dto';
 import { User } from 'models/user.model';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -26,16 +27,20 @@ export class UserService {
     },
   ];
 
+  private readonly saltRounds = 10; // Số vòng bcrypt để tăng độ bảo mật
+
   // Returns the list of all users
   getUsers(): User[] {
     return this.users;
   }
 
-  // Creates a new user and adds it to the list
-  createUser(userDTO: UserDTO): User {
+  // Hashes the password and creates a new user
+  async createUser(userDTO: UserDTO): Promise<User> {
+    const hashedPassword = await bcrypt.hash(userDTO.password, this.saltRounds);
     const user: User = {
       id: Math.random(), // Generate a random ID for the new user
-      ...userDTO
+      ...userDTO,
+      password: hashedPassword, // Store the hashed password
     };
     this.users.push(user);
     return user; // Return the created user
@@ -48,13 +53,18 @@ export class UserService {
   }
 
   // Updates an existing user based on the provided UserDTO
-  updateUser(userDTO: UserDTO, id: number): User | null {
+  async updateUser(userDTO: UserDTO, id: number): Promise<User | null> {
     const index = this.users.findIndex(item => item.id === Number(id));
     if (index !== -1) {
-      this.users[index] = {
+      // Hash password if it is being updated
+      const updatedUser = {
         ...this.users[index],
-        ...userDTO
+        ...userDTO,
       };
+      if (userDTO.password) {
+        updatedUser.password = await bcrypt.hash(userDTO.password, this.saltRounds);
+      }
+      this.users[index] = updatedUser;
       return this.users[index]; // Return the updated user
     }
     return null; // Return null if user not found
