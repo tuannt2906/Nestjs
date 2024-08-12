@@ -8,10 +8,10 @@ export class UserService {
   private users: User[] = [
     {
       id: 1,
-      username: "alex palestine",
+      username: "anna palestine",
       password: "hashed_password1",
       email: "alex.p@example.com",
-      gender: "male",
+      gender: 1,
       phonenumber: "+1234567890",
       age: 18
     },
@@ -20,7 +20,7 @@ export class UserService {
       username: "robert adam",
       password: "hashed_password2",
       email: "robert.a@example.com",
-      gender: "male",
+      gender: 0,
       phonenumber: "+0987654321",
       age: 19
     },
@@ -36,7 +36,7 @@ export class UserService {
       ...userDTO
     };
     this.users.push(user);
-    return userDTO;
+    return user;  // user/userDTO
   }
 
   detailUser(id: number): User {
@@ -45,12 +45,12 @@ export class UserService {
 
   updateUser(userDTO: UserDTO, id: number): User {
     const index = this.users.findIndex(item => item.id === Number(id));
-    this.users[index].username = userDTO.username;
-    this.users[index].password = userDTO.password;
-    this.users[index].email = userDTO.email;
-    this.users[index].gender = userDTO.gender;
-    this.users[index].phonenumber = userDTO.phonenumber;
-    this.users[index].age = userDTO.age;
+    if (index !== -1) {
+      this.users[index] = {
+        ...this.users[index],
+        ...userDTO
+      };
+    }
     return this.users[index];
   }
 
