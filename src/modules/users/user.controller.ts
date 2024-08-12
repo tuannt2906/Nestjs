@@ -19,9 +19,10 @@ export class UserController {
   }
 
   @Post()
-  createUser(@Body(new ValidationPipe()) userDTO: UserDTO): ResponseData<UserDTO> {
+  async createUser(@Body(new ValidationPipe()) userDTO: UserDTO): Promise<ResponseData<User>> {
     try {
-      return new ResponseData<User>(this.userService.createUser(userDTO), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
+      const user = await this.userService.createUser(userDTO);
+      return new ResponseData<User>(user, HttpStatus.CREATED, HttpMessage.SUCCESS); // Update to use CREATED status
     } catch (error) {
       return new ResponseData<User>(null, HttpStatus.ERROR, HttpMessage.ERROR);
     }
@@ -37,11 +38,12 @@ export class UserController {
   }
 
   @Put('/:id')
-  updateUser(@Body() userDTO: UserDTO, @Param('id') id: number): ResponseData<User> {
+  async updateUser(@Body() userDTO: UserDTO, @Param('id') id: number): Promise<ResponseData<User | null>> {
     try {
-      return new ResponseData<User>(this.userService.updateUser(userDTO, id), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
+      const updatedUser = await this.userService.updateUser(userDTO, id);
+      return new ResponseData<User | null>(updatedUser, HttpStatus.SUCCESS, HttpMessage.SUCCESS);
     } catch (error) {
-      return new ResponseData<User>(null, HttpStatus.ERROR, HttpMessage.ERROR);
+      return new ResponseData<User | null>(null, HttpStatus.ERROR, HttpMessage.ERROR);
     }
   }
 
