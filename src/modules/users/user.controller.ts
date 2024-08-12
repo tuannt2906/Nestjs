@@ -18,11 +18,6 @@ export class UserController {
     }
   }
 
-  @Get('/check-health')
-  checkHealth(): string {
-    return 'Ok';
-  }
-
   @Post()
   async createUser(@Body(new ValidationPipe()) userDTO: UserDTO): Promise<ResponseData<User>> {
     try {
