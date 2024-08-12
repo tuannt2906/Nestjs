@@ -1,56 +1,45 @@
 import {
-    ValidatorConstraint,
-    ValidatorConstraintInterface,
-    ValidationArguments,
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
+  ValidationArguments,
 } from 'class-validator'
 
-// Check email and username existed function
+// Check functions for various fields
 async function emailExists(email: string): Promise<boolean> {
-    // Database query to check when have database
-    return false;
+  // Database query to check email existence
+  return false;
 }
 
 async function usernameExists(username: string): Promise<boolean> {
-    // Database query to check when have database
-    return false;
+  // Database query to check username existence
+  return false;
 }
 
-@ValidatorConstraint({ async: true })
-export class IsEmailExistsConstraint implements ValidatorConstraintInterface {
-  async validate(email: string, args: ValidationArguments): Promise<boolean> {
-    return !(await emailExists(email));
-  }
-
-  defaultMessage(args: ValidationArguments): string {
-    return 'Email already exists!';
-  }
+async function phonenumberExists(phoneNumber: string): Promise<boolean> {
+  // Database query to check phoneNumber existence
+  return false;
 }
 
-@ValidatorConstraint({ async: true })
-export class IsUsernameExistsConstraint implements ValidatorConstraintInterface {
-  async validate(username: string, args: ValidationArguments): Promise<boolean> {
-    return !(await usernameExists(username));
-  }
+// Map fields to their corresponding existence checking functions
+const existenceInfo = {
+  email: emailExists,
+  username: usernameExists,
+  phoneNumber: phonenumberExists,
+};
 
-  defaultMessage(args: ValidationArguments): string {
-    return 'Username already exists!';
+@ValidatorConstraint({ async: true })
+export class IsUniqueFieldConstraint implements ValidatorConstraintInterface {
+async validate(value: string, args: ValidationArguments): Promise<boolean> {
+  const [field] = args.constraints;
+  const checkFunction = existenceInfo[field];
+  if (checkFunction) {
+    return !(await checkFunction(value));
   }
+  return false;
 }
 
-@ValidatorConstraint({ async: true })
-export class IsUniqueEmailOrUsernameConstraint implements ValidatorConstraintInterface {
-  async validate(value: string, args: ValidationArguments): Promise<boolean> {
-    const [field] = args.constraints;
-    if (field === 'email') {
-      return !(await emailExists(value));
-    }
-    if (field === 'username') {
-      return !(await usernameExists(value));
-    }
-    return false;
-  }
-
-  defaultMessage(args: ValidationArguments): string {
-    return `${args.property} already exists!`;
-  }
+defaultMessage(args: ValidationArguments): string {
+  const [field] = args.constraints;
+  return `${field} already exists!`;
+}
 }
