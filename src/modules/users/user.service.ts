@@ -10,7 +10,7 @@ export class UserService {
       id: 1,
       username: "anna palestine",
       password: "hashed_password1",
-      email: "alex.p@example.com",
+      email: "anna.p@example.com",
       gender: 1,
       phonenumber: "+1234567890",
       age: 18
@@ -24,42 +24,49 @@ export class UserService {
       phonenumber: "+0987654321",
       age: 19
     },
-  ]
+  ];
 
+  // Returns the list of all users
   getUsers(): User[] {
     return this.users;
   }
 
+  // Creates a new user and adds it to the list
   createUser(userDTO: UserDTO): User {
     const user: User = {
-      id: Math.random(),
+      id: Math.random(), // Generate a random ID for the new user
       ...userDTO
     };
     this.users.push(user);
-    return user;  // user/userDTO
+    return user; // Return the created user
   }
 
-  detailUser(id: number): User {
-    return this.users.find(item => item.id === Number(id)) as User;
+  // Retrieves user details by ID
+  detailUser(id: number): User | null {
+    const user = this.users.find(item => item.id === Number(id));
+    return user || null; // Return null if user not found
   }
 
-  updateUser(userDTO: UserDTO, id: number): User {
+  // Updates an existing user based on the provided UserDTO
+  updateUser(userDTO: UserDTO, id: number): User | null {
     const index = this.users.findIndex(item => item.id === Number(id));
     if (index !== -1) {
       this.users[index] = {
         ...this.users[index],
         ...userDTO
       };
+      return this.users[index]; // Return the updated user
     }
-    return this.users[index];
+    return null; // Return null if user not found
   }
 
+  // Deletes a user by ID
   deleteUser(id: number): boolean {
     const index = this.users.findIndex(item => item.id === Number(id));
     if (index !== -1) {
-      this.users.splice(index, 1);
-      return true;
+      this.users.splice(index, 1); // Remove the user from the list
+      return true; // Return true to indicate successful deletion
     }
-    return false;
+    return false; // Return false if user not found
   }
 }
