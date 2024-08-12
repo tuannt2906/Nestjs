@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, ValidationPipe } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Put, Param, Body, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ResponseData } from 'modules/global/globalClass';
 import { HttpStatus, HttpMessage } from 'modules/global/globalEnum';
@@ -16,6 +16,11 @@ export class UserController {
     } catch (error) {
       return new ResponseData<User[]>(null, HttpStatus.ERROR, HttpMessage.ERROR);
     }
+  }
+
+  @Get('/check-health')
+  checkHealth(): string {
+    return 'Ok';
   }
 
   @Post()
