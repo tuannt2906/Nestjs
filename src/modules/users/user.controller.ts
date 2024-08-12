@@ -1,7 +1,7 @@
-import { Controller, Delete, Get, Post, Put, Param, Body, ValidationPipe } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Put, Param, Body, ValidationPipe, HttpException, HttpStatus } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ResponseData } from 'modules/global/globalClass';
-import { HttpStatus, HttpMessage } from 'modules/global/globalEnum';
+import { HttpMessage, HttpStatus as GlobalHttpStatus } from 'modules/global/globalEnum';
 import { User } from 'models/user.model';
 import { UserDTO } from 'dto/user.dto';
 
@@ -10,11 +10,34 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  getUsers(): ResponseData<User[]> {
+  async getUsers(): Promise<ResponseData<User[]>> {
     try {
-      return new ResponseData<User[]>(this.userService.getUsers(), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
+      const users = await this.userService.getUsers();
+      return new ResponseData<User[]>(users, GlobalHttpStatus.OK, HttpMessage.OK);
     } catch (error) {
-      return new ResponseData<User[]>(null, HttpStatus.ERROR, HttpMessage.ERROR);
+      throw new HttpException(
+        new ResponseData<User[]>(null, GlobalHttpStatus.INTERNAL_SERVER_ERROR, HttpMessage.INTERNAL_SERVER_ERROR),
+        GlobalHttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Get('/:id')
+  async detailUser(@Param('id') id: number): Promise<ResponseData<User>> {
+    try {
+      const user = await this.userService.detailUser(id);
+      if (!user) {
+        throw new HttpException(
+          new ResponseData<User>(null, GlobalHttpStatus.NOT_FOUND, HttpMessage.NOT_FOUND),
+          GlobalHttpStatus.NOT_FOUND
+        );
+      }
+      return new ResponseData<User>(user, GlobalHttpStatus.OK, HttpMessage.OK);
+    } catch (error) {
+      throw new HttpException(
+        new ResponseData<User>(null, GlobalHttpStatus.INTERNAL_SERVER_ERROR, HttpMessage.INTERNAL_SERVER_ERROR),
+        GlobalHttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
   }
 
@@ -22,37 +45,62 @@ export class UserController {
   async createUser(@Body(new ValidationPipe()) userDTO: UserDTO): Promise<ResponseData<User>> {
     try {
       const user = await this.userService.createUser(userDTO);
-      return new ResponseData<User>(user, HttpStatus.CREATED, HttpMessage.SUCCESS); // Update to use CREATED status
+      return new ResponseData<User>(user, GlobalHttpStatus.CREATED, HttpMessage.CREATED);
     } catch (error) {
-      return new ResponseData<User>(null, HttpStatus.ERROR, HttpMessage.ERROR);
-    }
-  }
-
-  @Get('/:id')
-  detailUser(@Param('id') id: number): ResponseData<User> {
-    try {
-      return new ResponseData<User>(this.userService.detailUser(id), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
-    } catch (error) {
-      return new ResponseData<User>(null, HttpStatus.ERROR, HttpMessage.ERROR);
+      if (error.response?.statusCode === GlobalHttpStatus.BAD_REQUEST) {
+        throw new HttpException(
+          new ResponseData<User>(null, GlobalHttpStatus.BAD_REQUEST, HttpMessage.BAD_REQUEST),
+          GlobalHttpStatus.BAD_REQUEST
+        );
+      }
+      throw new HttpException(
+        new ResponseData<User>(null, GlobalHttpStatus.INTERNAL_SERVER_ERROR, HttpMessage.INTERNAL_SERVER_ERROR),
+        GlobalHttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
   }
 
   @Put('/:id')
-  async updateUser(@Body() userDTO: UserDTO, @Param('id') id: number): Promise<ResponseData<User | null>> {
+  async updateUser(@Body(new ValidationPipe()) userDTO: UserDTO, @Param('id') id: number): Promise<ResponseData<User | null>> {
     try {
       const updatedUser = await this.userService.updateUser(userDTO, id);
-      return new ResponseData<User | null>(updatedUser, HttpStatus.SUCCESS, HttpMessage.SUCCESS);
+      if (!updatedUser) {
+        throw new HttpException(
+          new ResponseData<User | null>(null, GlobalHttpStatus.NOT_FOUND, HttpMessage.NOT_FOUND),
+          GlobalHttpStatus.NOT_FOUND
+        );
+      }
+      return new ResponseData<User | null>(updatedUser, GlobalHttpStatus.OK, HttpMessage.OK);
     } catch (error) {
-      return new ResponseData<User | null>(null, HttpStatus.ERROR, HttpMessage.ERROR);
+      if (error.response?.statusCode === GlobalHttpStatus.BAD_REQUEST) {
+        throw new HttpException(
+          new ResponseData<User | null>(null, GlobalHttpStatus.BAD_REQUEST, HttpMessage.BAD_REQUEST),
+          GlobalHttpStatus.BAD_REQUEST
+        );
+      }
+      throw new HttpException(
+        new ResponseData<User | null>(null, GlobalHttpStatus.INTERNAL_SERVER_ERROR, HttpMessage.INTERNAL_SERVER_ERROR),
+        GlobalHttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
   }
 
   @Delete('/:id')
-  deleteUser(@Param('id') id: number): ResponseData<boolean> {
+  async deleteUser(@Param('id') id: number): Promise<ResponseData<boolean>> {
     try {
-      return new ResponseData<boolean>(this.userService.deleteUser(id), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
+      const result = await this.userService.deleteUser(id);
+      if (!result) {
+        throw new HttpException(
+          new ResponseData<boolean>(null, GlobalHttpStatus.NOT_FOUND, HttpMessage.NOT_FOUND),
+          GlobalHttpStatus.NOT_FOUND
+        );
+      }
+      return new ResponseData<boolean>(result, GlobalHttpStatus.OK, HttpMessage.OK);
     } catch (error) {
-      return new ResponseData<boolean>(null, HttpStatus.ERROR, HttpMessage.ERROR);
+      throw new HttpException(
+        new ResponseData<boolean>(null, GlobalHttpStatus.INTERNAL_SERVER_ERROR, HttpMessage.INTERNAL_SERVER_ERROR),
+        GlobalHttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
   }
 }

@@ -1,10 +1,17 @@
 export enum HttpStatus {
-  ERROR = 404,
-  SUCCESS = 200,
+  OK = 200,
   CREATED = 201,
-};
+  BAD_REQUEST = 400,
+  NOT_FOUND = 404,
+  INTERNAL_SERVER_ERROR = 500,
+  BAD_GATEWAY = 502,
+}
 
 export enum HttpMessage {
-  ERROR = 'Server Internal Error',
-  SUCCESS = 'Server Response Success',
-};
+  OK = 'Request succeeded.',
+  CREATED = 'Resource successfully created.',
+  BAD_REQUEST = 'Bad request. Please check the input data.',
+  NOT_FOUND = 'Resource not found.',
+  INTERNAL_SERVER_ERROR = 'Internal server error.',
+  BAD_GATEWAY = 'Bad gateway. Server error.',
+}

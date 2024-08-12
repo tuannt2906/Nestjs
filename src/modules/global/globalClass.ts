@@ -7,6 +7,5 @@ export class ResponseData<D> {
     this.data = data;
     this.statusCode = statusCode;
     this.message = message;
-    return this;
   }
 };
