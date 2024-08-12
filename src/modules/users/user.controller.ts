@@ -18,20 +18,20 @@ export class UserController {
     }
   }
 
-  @Post()
-  async createUser(@Body(new ValidationPipe()) userDTO: UserDTO): Promise<ResponseData<User>> {
+  @Get('/:id')
+  detailUser(@Param('id') id: number): ResponseData<User> {
     try {
-      const user = await this.userService.createUser(userDTO);
-      return new ResponseData<User>(user, HttpStatus.CREATED, HttpMessage.SUCCESS); // Update to use CREATED status
+      return new ResponseData<User>(this.userService.detailUser(id), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
     } catch (error) {
       return new ResponseData<User>(null, HttpStatus.ERROR, HttpMessage.ERROR);
     }
   }
 
-  @Get('/:id')
-  detailUser(@Param('id') id: number): ResponseData<User> {
+  @Post()
+  async createUser(@Body(new ValidationPipe()) userDTO: UserDTO): Promise<ResponseData<User>> {
     try {
-      return new ResponseData<User>(this.userService.detailUser(id), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
+      const user = await this.userService.createUser(userDTO);
+      return new ResponseData<User>(user, HttpStatus.CREATED, HttpMessage.SUCCESS); // Update to use CREATED status
     } catch (error) {
       return new ResponseData<User>(null, HttpStatus.ERROR, HttpMessage.ERROR);
     }
