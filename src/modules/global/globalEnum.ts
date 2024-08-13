@@ -15,5 +15,5 @@ export enum HttpMessage {
   NOT_FOUND = 'Resource not found.',
   INTERNAL_SERVER_ERROR = 'Internal server error.',
   BAD_GATEWAY = 'Bad gateway. Server error.',
-  NO_CONTENT = 'No content founded.',
+  NO_CONTENT = 'Delete success, no user founded.',
 }

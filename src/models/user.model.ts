@@ -1,8 +1,8 @@
 export class User {
-  id?: number;
-  username?: string;
-  password?: string;
-  email?: string;
+  id: number;
+  username: string;
+  password: string;
+  email: string;
   gender?: number;
   phonenumber?: string;
   age?: number;
@@ -16,10 +16,10 @@ export class User {
     phonenumber,
     age
   }: {
-    id?: number;
-    username?: string;
-    password?: string;
-    email?: string;
+    id: number;
+    username: string;
+    password: string;
+    email: string;
     gender?: number;
     phonenumber?: string;
     age?: number;
