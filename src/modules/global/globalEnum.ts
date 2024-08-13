@@ -5,6 +5,7 @@ export enum HttpStatus {
   NOT_FOUND = 404,
   INTERNAL_SERVER_ERROR = 500,
   BAD_GATEWAY = 502,
+  NO_CONTENT = 204,
 }
 
 export enum HttpMessage {
@@ -14,4 +15,5 @@ export enum HttpMessage {
   NOT_FOUND = 'Resource not found.',
   INTERNAL_SERVER_ERROR = 'Internal server error.',
   BAD_GATEWAY = 'Bad gateway. Server error.',
+  NO_CONTENT = 'No content founded.',
 }

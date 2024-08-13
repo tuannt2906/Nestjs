@@ -86,19 +86,19 @@ export class UserController {
   }
 
   @Delete('/:id')
-  async deleteUser(@Param('id') id: number): Promise<ResponseData<boolean>> {
+  async deleteUser(@Param('id') id: number): Promise<ResponseData<void>> {
     try {
       const result = await this.userService.deleteUser(id);
       if (!result) {
         throw new HttpException(
-          new ResponseData<boolean>(null, GlobalHttpStatus.NOT_FOUND, HttpMessage.NOT_FOUND),
+          new ResponseData<void>(null, GlobalHttpStatus.NOT_FOUND, HttpMessage.NOT_FOUND),
           GlobalHttpStatus.NOT_FOUND
         );
       }
-      return new ResponseData<boolean>(result, GlobalHttpStatus.OK, HttpMessage.OK);
+      return new ResponseData<void>(null, GlobalHttpStatus.NO_CONTENT, HttpMessage.NO_CONTENT);
     } catch (error) {
       throw new HttpException(
-        new ResponseData<boolean>(null, GlobalHttpStatus.INTERNAL_SERVER_ERROR, HttpMessage.INTERNAL_SERVER_ERROR),
+        new ResponseData<void>(null, GlobalHttpStatus.INTERNAL_SERVER_ERROR, HttpMessage.INTERNAL_SERVER_ERROR),
         GlobalHttpStatus.INTERNAL_SERVER_ERROR
       );
     }
