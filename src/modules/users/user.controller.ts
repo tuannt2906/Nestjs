@@ -95,6 +95,7 @@ export class UserController {
           GlobalHttpStatus.NOT_FOUND
         );
       }
+      // Return a response with no content, which is appropriate for a 204 status code
       return new ResponseData<void>(null, GlobalHttpStatus.NO_CONTENT, HttpMessage.NO_CONTENT);
     } catch (error) {
       throw new HttpException(
