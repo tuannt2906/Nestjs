@@ -60,8 +60,8 @@ export class UserService {
   }
 
   // Retrieves user details by ID
-  detailUser(id: number | string): User {
-    const userId = typeof id === 'string' ? parseInt(id, 10) : id; // Convert string to number if necessary
+  detailUser(id: number): any {
+    const userId = id; // Convert string to number if necessary
     const user = this.users.find(item => item.id === userId);
     if (!user) {
       throw new NotFoundException('User not found');
