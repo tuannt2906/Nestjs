@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { UserDTO } from 'dto/user.dto';
-import { User } from '@prisma/client';
+import { User } from '@prisma/client'; // Ensure you have set up Prisma correctly
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'prisma.service';
 
@@ -53,7 +53,7 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return user;
+    return user; // Return the found user
   }
 
   // Updates an existing user based on the provided UserDTO
@@ -85,6 +85,6 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return true;
+    return true; // Return true to indicate successful deletion
   }
 }

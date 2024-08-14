@@ -2,7 +2,7 @@ import { Controller, Delete, Get, Post, Put, Param, Body, ValidationPipe, HttpEx
 import { UserService } from './user.service';
 import { ResponseData } from 'modules/global/globalClass';
 import { HttpMessage, HttpStatus as GlobalHttpStatus } from 'modules/global/globalEnum';
-import { User } from '@prisma/client'; // Đảm bảo đường dẫn chính xác
+import { User } from '@prisma/client';
 import { UserDTO } from 'dto/user.dto';
 
 @Controller('users')
@@ -95,6 +95,7 @@ export class UserController {
           GlobalHttpStatus.NOT_FOUND
         );
       }
+      // Return a response with no content, which is appropriate for a 204 status code
       return new ResponseData<void>(null, GlobalHttpStatus.NO_CONTENT, HttpMessage.NO_CONTENT);
     } catch (error) {
       throw new HttpException(
