@@ -11,8 +11,8 @@
     "outDir": "./dist",                   // Thư mục output cho các file biên dịch
     "baseUrl": "./",                      // Cơ sở để xác định các đường dẫn
     "incremental": true,                  // Sử dụng incremental compilation
-    "skipLibCheck": true,                 // Bỏ qua kiểm tra type của các thư viện
-    "strictNullChecks": false,            // Bật kiểm tra null và undefined
+    "skipLibCheck": false,                 // Bỏ qua kiểm tra type của các thư viện
+    "strictNullChecks": true,            // Bật kiểm tra null và undefined
     "noImplicitAny": false,               // Tắt lỗi khi có biến không xác định kiểu
     "strictBindCallApply": false,         // Tắt kiểm tra strict bind, call, apply
     "forceConsistentCasingInFileNames": false, // Bắt buộc độ chính xác của tên file
