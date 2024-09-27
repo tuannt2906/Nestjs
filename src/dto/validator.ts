@@ -2,7 +2,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
   ValidationArguments,
-} from 'class-validator'
+} from 'class-validator';
 
 // Check functions for various fields
 async function emailExists(email: string): Promise<boolean> {
@@ -29,17 +29,17 @@ const existenceInfo = {
 
 @ValidatorConstraint({ async: true })
 export class IsUniqueFieldConstraint implements ValidatorConstraintInterface {
-async validate(value: string, args: ValidationArguments): Promise<boolean> {
-  const [field] = args.constraints;
-  const checkFunction = existenceInfo[field];
-  if (checkFunction) {
-    return !(await checkFunction(value));
+  async validate(value: string, args: ValidationArguments): Promise<boolean> {
+    const [field] = args.constraints;
+    const checkFunction = existenceInfo[field];
+    if (checkFunction) {
+      return !(await checkFunction(value));
+    }
+    return false;
   }
-  return false;
-}
 
-defaultMessage(args: ValidationArguments): string {
-  const [field] = args.constraints;
-  return `${field} already exists!`;
-}
+  defaultMessage(args: ValidationArguments): string {
+    const [field] = args.constraints;
+    return `${field} already exists!`;
+  }
 }

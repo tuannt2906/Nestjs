@@ -18,9 +18,7 @@ model User {
   username    String  @unique
   password    String
   email       String  @unique
-  gender      Int?    // Optional field
-  phonenumber String? // Optional field
-  age         Int?    // Optional field
+  deletedAt   DateTime?
 
   @@map("users") // Optional: maps the model to a specific table name if you have naming conventions.
 }

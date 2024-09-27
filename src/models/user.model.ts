@@ -3,27 +3,18 @@ export class User {
   username: string;
   password: string;
   email: string;
-  gender?: number;
-  phonenumber?: string;
-  age?: number;
 
   constructor({
     id,
     username,
     password,
-    email,
-    gender,
-    phonenumber,
-    age
+    email
   }: {
     id: number;
     username: string;
     password: string;
     email: string;
-    gender?: number;
-    phonenumber?: string;
-    age?: number;
   }) {
-    Object.assign(this, { id, username, password, email, gender, phonenumber, age });
+    Object.assign(this, { id, username, password, email});
   }
 }

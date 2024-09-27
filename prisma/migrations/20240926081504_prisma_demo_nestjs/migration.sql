@@ -4,9 +4,7 @@ CREATE TABLE `users` (
     `username` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
-    `gender` INTEGER NULL,
-    `phonenumber` VARCHAR(191) NULL,
-    `age` INTEGER NULL,
+    `deletedAt` DATETIME(3) NULL,
 
     UNIQUE INDEX `users_username_key`(`username`),
     UNIQUE INDEX `users_email_key`(`email`),

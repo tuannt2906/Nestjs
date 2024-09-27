@@ -3,9 +3,7 @@ import {
   IsString, 
   IsEmail, 
   MinLength, 
-  MaxLength, 
-  IsNumber, 
-  IsIn, 
+  MaxLength,
   Matches, 
   Validate, 
 } from 'class-validator';
@@ -30,14 +28,4 @@ export class UserDTO {
   @IsEmail({}, { message: 'Invalid email format!' })
   @Validate(IsUniqueFieldConstraint, ['email'])
   email: string;
-
-  @IsIn([0, 1], { message: 'Gender must be 0 (male) or 1 (female).' })
-  gender?: number;
-
-  @Matches(/^\+\d+$/, { message: 'Phone number must be in the format "+xxxxx"' })
-  @Validate(IsUniqueFieldConstraint, ['phoneNumber'])
-  phonenumber?: string;
-
-  @IsNumber({}, { message: 'Age must be a number.' })
-  age?: number;
 }
