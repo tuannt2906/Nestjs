@@ -14,13 +14,11 @@ export class UserService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  // Returns the list of all users
   async getUsers(): Promise<User[]> {
     return this.prisma.user.findMany();
   }
 
-  // Hashes the password and creates a new user
-  async createUser(userDTO: UserDTO): Promise<User> {
+  private async checkUserExists(userDTO: UserDTO): Promise<void> {
     const existingUser = await this.prisma.user.findFirst({
       where: {
         OR: [{ username: userDTO.username }, { email: userDTO.email }],
@@ -35,6 +33,10 @@ export class UserService {
         throw new ConflictException('Email already exists');
       }
     }
+  }
+
+  async createUser(userDTO: UserDTO): Promise<User> {
+    await this.checkUserExists(userDTO);
 
     const hashedPassword = await bcrypt.hash(userDTO.password, this.saltRounds);
     return this.prisma.user.create({
@@ -45,7 +47,6 @@ export class UserService {
     });
   }
 
-  // Retrieves user details by ID
   async detailUser(id: number): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: { id },
@@ -56,7 +57,6 @@ export class UserService {
     return user;
   }
 
-  // Updates an existing user based on the provided UserDTO
   async updateUser(userDTO: UserDTO, id: number): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: { id },
@@ -64,12 +64,10 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
     const dataToUpdate: Partial<UserDTO> = { ...userDTO };
     if (userDTO.password) {
-      dataToUpdate.password = await bcrypt.hash(
-        userDTO.password,
-        this.saltRounds,
-      );
+      dataToUpdate.password = await bcrypt.hash(userDTO.password, this.saltRounds);
     }
     return this.prisma.user.update({
       where: { id },
@@ -77,15 +75,13 @@ export class UserService {
     });
   }
 
-  // Deletes a user by ID
-  async deleteUser(id: number): Promise<boolean> {
-    const user = await this.prisma.user.delete({
-      where: { id },
-    });
-
-    if (!user) {
+  async deleteUser(id: number): Promise<void> {
+    try {
+      await this.prisma.user.delete({
+        where: { id },
+      });
+    } catch (error) {
       throw new NotFoundException('User not found');
     }
-    return true;
   }
 }

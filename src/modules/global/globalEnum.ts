@@ -6,6 +6,8 @@ export enum HttpStatus {
   INTERNAL_SERVER_ERROR = 500,
   BAD_GATEWAY = 502,
   NO_CONTENT = 204,
+  FORBIDDEN = 403,
+  UNAUTHORIZED = 401,
 }
 
 export enum HttpMessage {
@@ -15,5 +17,7 @@ export enum HttpMessage {
   NOT_FOUND = 'Resource not found.',
   INTERNAL_SERVER_ERROR = 'Internal server error.',
   BAD_GATEWAY = 'Bad gateway. Server error.',
-  NO_CONTENT = 'Delete success, no user founded.',
+  NO_CONTENT = 'Request succeeded, no content.',
+  FORBIDDEN = 'Access denied. You do not have permission to access this resource.',
+  UNAUTHORIZED = 'Authentication required. Please log in.',
 }

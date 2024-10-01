@@ -4,23 +4,18 @@ import {
   ValidationArguments,
 } from 'class-validator';
 
-// Check functions for various fields
 async function emailExists(email: string): Promise<boolean> {
-  // Database query to check email existence
   return false;
 }
 
 async function usernameExists(username: string): Promise<boolean> {
-  // Database query to check username existence
   return false;
 }
 
 async function phonenumberExists(phoneNumber: string): Promise<boolean> {
-  // Database query to check phoneNumber existence
   return false;
 }
 
-// Map fields to their corresponding existence checking functions
 const existenceInfo = {
   email: emailExists,
   username: usernameExists,
