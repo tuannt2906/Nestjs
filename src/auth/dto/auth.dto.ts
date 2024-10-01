@@ -2,29 +2,28 @@ import {
   IsEmail,
   IsNotEmpty,
   IsOptional,
-  Matches,
   MinLength,
+  Validate,
 } from 'class-validator';
+import { IsValidPasswordConstraint } from 'dto/validator';
 
 export class CreateAuthDto {
   @IsOptional()
   name: string;
+
   @IsNotEmpty()
   @IsEmail({}, { message: 'Invalid email format!' })
   email: string;
 
   @IsNotEmpty()
   @MinLength(8, { message: 'Password must be at least 8 characters long!' })
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,}$/, {
-    message:
-      'Password must contain at least one uppercase letter, one special character, one number, and be at least 8 characters long.',
-  })
+  @Validate(IsValidPasswordConstraint)
   password: string;
 }
 
 export class CodeAuthDto {
-  @IsNotEmpty({ message: 'Must have _id!' })
-  _id: string;
+  @IsNotEmpty({ message: 'Must have id!' })
+  id: string;
 
   @IsNotEmpty({ message: 'Must have code!' })
   code: string;
