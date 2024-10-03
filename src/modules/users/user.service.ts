@@ -5,6 +5,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { UserDTO } from 'dto/user.dto';
+import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from '@prisma/client';
 import { ComparePass, HashPass } from 'helpers/utils'; // Import HashPass
@@ -40,17 +41,35 @@ export class UserService {
     }
   }
 
-  async registerUser(userDTO: UserDTO): Promise<User> {
+  async registerUser(userDTO: UserDTO): Promise<{ id: number }> {
     await this.checkUserExists(userDTO);
     const hashedPassword = await HashPass(userDTO.password);
-    return this.prisma.user.create({
+    const codeID = uuidv4();
+    const user = await this.prisma.user.create({
       data: {
         ...userDTO,
         password: hashedPassword,
         isActive: false,
+        codeId: codeID,
+        codeExpired: dayjs().add(5, 'minutes').toDate(),
       },
     });
+    await this.mailerService.sendMail({
+      to: user.email,
+      subject: 'Activate your account',
+      text: 'Welcome',
+      template: 'mailer.hbs',
+      context: {
+        name: user.username || user.email,
+        activationCode: codeID,
+      },
+    });
+  
+    return {
+      id: user.id,
+    };
   }
+  
 
   async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.prisma.user.findFirst({

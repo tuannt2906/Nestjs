@@ -34,9 +34,9 @@ export class AuthController {
   @Public()
   getMail() {
     this.mailerService.sendMail({
-      to: 'nguyentuan123.yeah@gmail.com', // list of receivers
-      subject: 'Testing Nest MailerModule ✔', // Subject line
-      text: 'welcome', // plaintext body
+      to: 'nguyentuan123.yeah@gmail.com',
+      subject: 'CAR ANTI THIEF ✔',
+      text: 'welcome',
       template: 'mailer.hbs',
       context: {
         name: 'Tuan Nguyen',
@@ -48,7 +48,7 @@ export class AuthController {
 
   @Post('register')
   @Public()
-  async register(@Body() registerDto: UserDTO): Promise<User> {
+  async register(@Body() registerDto: UserDTO) {
     return this.authService.register(registerDto);
   }
 

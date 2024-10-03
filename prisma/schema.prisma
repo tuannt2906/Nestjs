@@ -20,6 +20,8 @@ model User {
   email     String    @unique
   deletedAt DateTime?
   isActive  Boolean   @default(false)
+  codeId     String?  
+  codeExpired DateTime?
 
   @@map("users") // Optional: maps the model to a specific table name if you have naming conventions.
 }
