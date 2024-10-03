@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { UserService } from 'modules/users/user.service';
 import { ComparePass } from 'helpers/utils';
+import { ChangePasswordAuthDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -32,4 +33,8 @@ export class AuthService {
   register = async (registerDto: UserDTO) => {
     return this.userService.registerUser(registerDto);
   }
+
+  changePassword = async (data: ChangePasswordAuthDto) => {
+    return this.userService.changePassword(data);
+  };
 }

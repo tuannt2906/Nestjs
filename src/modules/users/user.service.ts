@@ -9,10 +9,15 @@ import { v4 as uuidv4 } from 'uuid';
 import { User } from '@prisma/client';
 import { ComparePass, HashPass } from 'helpers/utils'; // Import HashPass
 import { PrismaService } from 'prisma.service';
+import { ChangePasswordAuthDto } from 'auth/dto/auth.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly mailerService: MailerService,
+  ) {}
 
   async getUsers(): Promise<User[]> {
     return this.prisma.user.findMany();
@@ -24,7 +29,7 @@ export class UserService {
         OR: [{ username: userDTO.username }, { email: userDTO.email }],
       },
     });
-  
+
     if (existingUser) {
       if (existingUser.username === userDTO.username) {
         throw new ConflictException('Username already exists');
@@ -112,5 +117,28 @@ export class UserService {
     } catch (error) {
       throw new NotFoundException('User not found');
     }
+  }
+
+  async changePassword(
+    data: ChangePasswordAuthDto,
+  ): Promise<{ success: boolean }> {
+    if (data.confirmPassword !== data.password) {
+      throw new BadRequestException(
+        'Password and Confirm Password are different!',
+      );
+    }
+    const user = await this.prisma.user.findUnique({
+      where: { email: data.email },
+    });
+    if (!user) {
+      throw new BadRequestException('Account does not exist!');
+    }
+    const hashedPassword = await HashPass(data.password);
+    await this.prisma.user.update({
+      where: { email: data.email },
+      data: { password: hashedPassword },
+    });
+
+    return { success: true };
   }
 }

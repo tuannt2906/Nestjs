@@ -30,9 +30,6 @@ export class CodeAuthDto {
 }
 
 export class ChangePasswordAuthDto {
-  @IsNotEmpty({ message: 'Must have code!' })
-  code: string;
-
   @IsNotEmpty({ message: 'Must have password!' })
   password: string;
 
