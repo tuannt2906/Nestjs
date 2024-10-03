@@ -14,11 +14,12 @@ datasource db {
 }
 
 model User {
-  id          Int     @id @default(autoincrement())
-  username    String  @unique
-  password    String
-  email       String  @unique
-  deletedAt   DateTime?
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  password  String
+  email     String    @unique
+  deletedAt DateTime?
+  isActive  Boolean   @default(false)
 
   @@map("users") // Optional: maps the model to a specific table name if you have naming conventions.
 }

@@ -1,17 +1,17 @@
 import {
   Injectable,
   NotFoundException,
+  BadRequestException,
   ConflictException,
 } from '@nestjs/common';
 import { UserDTO } from 'dto/user.dto';
+import { v4 as uuidv4 } from 'uuid';
 import { User } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+import { ComparePass, HashPass } from 'helpers/utils'; // Import HashPass
 import { PrismaService } from 'prisma.service';
 
 @Injectable()
 export class UserService {
-  private readonly saltRounds = 10;
-
   constructor(private readonly prisma: PrismaService) {}
 
   async getUsers(): Promise<User[]> {
@@ -24,7 +24,7 @@ export class UserService {
         OR: [{ username: userDTO.username }, { email: userDTO.email }],
       },
     });
-
+  
     if (existingUser) {
       if (existingUser.username === userDTO.username) {
         throw new ConflictException('Username already exists');
@@ -35,14 +35,43 @@ export class UserService {
     }
   }
 
-  async createUser(userDTO: UserDTO): Promise<User> {
+  async registerUser(userDTO: UserDTO): Promise<User> {
     await this.checkUserExists(userDTO);
-
-    const hashedPassword = await bcrypt.hash(userDTO.password, this.saltRounds);
+    const hashedPassword = await HashPass(userDTO.password);
     return this.prisma.user.create({
       data: {
         ...userDTO,
         password: hashedPassword,
+        isActive: false,
+      },
+    });
+  }
+
+  async validateUser(email: string, password: string): Promise<User | null> {
+    const user = await this.prisma.user.findFirst({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    if (!user.isActive) {
+      throw new BadRequestException('Account is not activated');
+    }
+    if (await ComparePass(password, user.password)) {
+      return user;
+    }
+    return null;
+  }
+
+  async createUser(userDTO: UserDTO): Promise<User> {
+    await this.checkUserExists(userDTO);
+    const hashedPassword = await HashPass(userDTO.password);
+    return this.prisma.user.create({
+      data: {
+        ...userDTO,
+        password: hashedPassword,
+        isActive: true,
       },
     });
   }
@@ -67,7 +96,7 @@ export class UserService {
 
     const dataToUpdate: Partial<UserDTO> = { ...userDTO };
     if (userDTO.password) {
-      dataToUpdate.password = await bcrypt.hash(userDTO.password, this.saltRounds);
+      dataToUpdate.password = await HashPass(userDTO.password);
     }
     return this.prisma.user.update({
       where: { id },

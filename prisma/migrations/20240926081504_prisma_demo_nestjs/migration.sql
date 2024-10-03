@@ -5,6 +5,7 @@ CREATE TABLE `users` (
     `password` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
     `deletedAt` DATETIME(3) NULL,
+    `isActive` BOOLEAN NOT NULL DEFAULT false,
 
     UNIQUE INDEX `users_username_key`(`username`),
     UNIQUE INDEX `users_email_key`(`email`),

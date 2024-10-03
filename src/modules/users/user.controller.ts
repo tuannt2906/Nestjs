@@ -11,6 +11,7 @@ import {
   ParseIntPipe,
   NotFoundException,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ResponseData } from 'modules/global/globalClass';

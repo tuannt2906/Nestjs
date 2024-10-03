@@ -10,13 +10,13 @@ import { AuthService } from 'auth/auth.service';
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
-    super();
+    super({ usernameField: 'email' });
   }
 
-  async validate(username: string, password: string): Promise<any> {
-    const user = await this.authService.validateUser(username, password);
+  async validate(email: string, password: string): Promise<any> {
+    const user = await this.authService.validateUser(email, password);
     if (!user) {
-      throw new UnauthorizedException('Username/Password is invalid!');
+      throw new UnauthorizedException('Email/Password is invalid!');
     }
     if (user.isActive === false) {
       throw new BadRequestException('Account is not actived!');
@@ -24,3 +24,4 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     return user;
   }
 }
+1

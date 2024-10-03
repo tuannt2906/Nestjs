@@ -5,6 +5,7 @@ import {
   MinLength,
   MaxLength,
   Validate,
+  IsOptional,
 } from 'class-validator';
 import {
   IsUniqueFieldConstraint,
@@ -13,6 +14,9 @@ import {
 } from './validator';
 
 export class UserDTO {
+  @IsOptional()
+  id?: number;
+  
   @IsNotEmpty()
   @IsString()
   @MinLength(1, { message: 'Username is required and should not be empty.' })
