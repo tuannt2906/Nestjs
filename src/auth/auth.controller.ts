@@ -11,9 +11,8 @@ import { AuthService } from './auth.service';
 import { Public, ResponseMessage } from 'customs/customize';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { UserDTO } from 'modules/users/dto/user.dto';
-import { User } from '@prisma/client';
-import { MailerService } from '@nestjs-modules/mailer';
 import { ChangePasswordAuthDto } from './dto/auth.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Controller('auth')
 export class AuthController {
@@ -57,11 +56,4 @@ export class AuthController {
   changePassword(@Body() data: ChangePasswordAuthDto) {
     return this.authService.changePassword(data);
   }
-
-  // @Post('refresh-token')
-  // @Public()
-  // @ResponseMessage('Refresh Access Token')
-  // async refreshToken(@Body() body: { userId: number; refreshToken: string }) {
-  //   return this.authService.refreshTokens(body.userId, body.refreshToken);
-  // }
 }

@@ -37,4 +37,13 @@ export class UserDTO {
   @Validate(IsUniqueFieldConstraint, ['email'])
   @Validate(IsValidEmailConstraint)
   email: string;
+
+  @IsOptional()
+  isActive?: boolean;
+
+  @IsOptional()
+  codeId?: string;
+
+  @IsOptional()
+  codeExpired?: Date;
 }
