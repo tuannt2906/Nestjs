@@ -20,7 +20,7 @@ import {
   HttpStatus as GlobalHttpStatus,
 } from 'modules/global/globalEnum';
 import { User } from '@prisma/client';
-import { UserDTO } from 'dto/user.dto';
+import { UserDTO } from 'modules/users/dto/user.dto';
 
 @Controller('users')
 export class UserController {

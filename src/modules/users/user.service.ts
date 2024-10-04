@@ -4,7 +4,7 @@ import {
   BadRequestException,
   ConflictException,
 } from '@nestjs/common';
-import { UserDTO } from 'dto/user.dto';
+import { UserDTO } from 'modules/users/dto/user.dto';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from '@prisma/client';

@@ -5,7 +5,7 @@ import {
   MinLength,
   Validate,
 } from 'class-validator';
-import { IsValidPasswordConstraint } from 'dto/validator';
+import { IsValidPasswordConstraint } from 'modules/users/dto/validator';
 
 export class CreateAuthDto {
   @IsOptional()
