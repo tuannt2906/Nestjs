@@ -7,7 +7,7 @@ import {
 import { UserDTO } from 'modules/users/dto/user.dto';
 import dayjs from 'dayjs';
 import { User } from '@prisma/client';
-import { ComparePass, HashPass } from 'helpers/utils'; // Import HashPass
+import { ComparePass, HashPass } from 'helpers/utils';
 import { PrismaService } from 'prisma.service';
 import { ChangePasswordAuthDto } from 'auth/dto/auth.dto';
 
@@ -64,7 +64,7 @@ export class UserService {
     return user;
   }
 
-  async updateUser(userDTO: UserDTO, id: number): Promise<User> {
+  async updateUser(userDTO: Partial<UserDTO>, id: number): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -79,6 +79,13 @@ export class UserService {
     return this.prisma.user.update({
       where: { id },
       data: dataToUpdate,
+    });
+  }
+
+  async updateUserData(data: Partial<UserDTO>, userId: number): Promise<User> {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data,
     });
   }
 
@@ -110,4 +117,31 @@ export class UserService {
 
     return { success: true };
   }
+
+  async findUserByEmail(email: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { email },
+    });
+  }
+
+  async saveRefreshToken(userId: number, refreshToken: string): Promise<void> {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { refreshToken },
+    });
+  }
+
+  async findUserByRefreshToken(refreshToken: string): Promise<User | null> {
+    return this.prisma.user.findFirst({
+      where: { refreshToken },
+    });
+  }
+
+  async clearRefreshToken(userId: number): Promise<void> {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { refreshToken: null },
+    });
+  }
 }
+

@@ -46,4 +46,7 @@ export class UserDTO {
 
   @IsOptional()
   codeExpired?: Date;
+
+  @IsOptional()
+  refreshToken?: string;
 }

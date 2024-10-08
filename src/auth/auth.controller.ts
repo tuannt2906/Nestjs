@@ -6,6 +6,7 @@ import {
   Request,
   Patch,
   Get,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public, ResponseMessage } from 'customs/customize';
@@ -29,6 +30,12 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
+  @Post('refresh-token')
+  @Public()
+  async refreshToken(@Body('refreshToken') refreshToken: string) {
+    return this.authService.refreshAccessToken(refreshToken);
+  }
+
   @Get('mail')
   @Public()
   getMail() {
@@ -45,6 +52,16 @@ export class AuthController {
     return 'Ok!';
   }
 
+  @Post('activate')
+  @Public()
+  async activateAccount(@Body('email') email: string, @Body('code') code: string) {
+    const result = await this.authService.activateAccount(email, code);
+    if (!result) {
+      throw new BadRequestException('Invalid activation code or expired');
+    }
+    return { message: 'Account activated successfully' };
+  }
+
   @Post('register')
   @Public()
   async register(@Body() registerDto: UserDTO) {
@@ -55,5 +72,11 @@ export class AuthController {
   @Public()
   changePassword(@Body() data: ChangePasswordAuthDto) {
     return this.authService.changePassword(data);
+  }
+
+  @Post('logout')
+  async logout(@Request() req) {
+    const userId = req.user.id;
+    await this.authService.logout(userId);
   }
 }
