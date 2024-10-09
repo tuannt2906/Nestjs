@@ -6,14 +6,14 @@ import {
   Request,
   Patch,
   Get,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public, ResponseMessage } from 'customs/customize';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { UserDTO } from 'modules/users/dto/user.dto';
-import { User } from '@prisma/client';
-import { MailerService } from '@nestjs-modules/mailer';
 import { ChangePasswordAuthDto } from './dto/auth.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Controller('auth')
 export class AuthController {
@@ -28,6 +28,12 @@ export class AuthController {
   @ResponseMessage('Fetch login')
   async login(@Request() req) {
     return this.authService.login(req.user);
+  }
+
+  @Post('refresh-token')
+  @Public()
+  async refreshToken(@Body('refreshToken') refreshToken: string) {
+    return this.authService.refreshAccessToken(refreshToken);
   }
 
   @Get('mail')
@@ -46,6 +52,16 @@ export class AuthController {
     return 'Ok!';
   }
 
+  @Post('activate')
+  @Public()
+  async activateAccount(@Body('email') email: string, @Body('code') code: string) {
+    const result = await this.authService.activateAccount(email, code);
+    if (!result) {
+      throw new BadRequestException('Invalid activation code or expired');
+    }
+    return { message: 'Account activated successfully' };
+  }
+
   @Post('register')
   @Public()
   async register(@Body() registerDto: UserDTO) {
@@ -58,10 +74,9 @@ export class AuthController {
     return this.authService.changePassword(data);
   }
 
-  // @Post('refresh-token')
-  // @Public()
-  // @ResponseMessage('Refresh Access Token')
-  // async refreshToken(@Body() body: { userId: number; refreshToken: string }) {
-  //   return this.authService.refreshTokens(body.userId, body.refreshToken);
-  // }
+  @Post('logout')
+  async logout(@Request() req) {
+    const userId = req.user.id;
+    await this.authService.logout(userId);
+  }
 }
