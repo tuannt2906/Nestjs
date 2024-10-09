@@ -10,6 +10,7 @@ import { AuthModule } from 'auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from 'auth/guard/jwt-auth.guard';
+import { TestDataModule } from 'modules/TestData/testData.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { JwtAuthGuard } from 'auth/guard/jwt-auth.guard';
       }),
       inject: [ConfigService],
     }),
+    TestDataModule,
   ],
   controllers: [AppController],
   providers: [

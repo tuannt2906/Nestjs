@@ -20,3 +20,9 @@ model User {
 
   @@map("users")
 }
+
+model TestData {
+  id      Int      @id
+  message String
+  date    DateTime @default(now())
+}
