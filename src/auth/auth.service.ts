@@ -126,15 +126,25 @@ export class AuthService {
     }
   }
 
-  async activateAccount(email: string, code: string): Promise<boolean> {
+  private async createRefreshToken(userId: number): Promise<string> {
+    const payload = { sub: userId };
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRED,
+    });
+    await this.userService.saveRefreshToken(userId, refreshToken);
+    return refreshToken;
+  }
+
+  async activateAccount(email: string, code: string): Promise<{ isActive: boolean; refreshToken: string | null }> {
     const user = await this.userService.findUserByEmail(email);
-
+  
     if (!user || user.codeId !== code || dayjs().isAfter(user.codeExpired)) {
-      return false;
+      return { isActive: false, refreshToken: null };
     }
-
+  
     await this.userService.updateUser({ isActive: true }, user.id);
-    return true;
+    const refreshToken = await this.createRefreshToken(user.id);
+    return { isActive: true, refreshToken };
   }
 
   async changePassword(data: ChangePasswordAuthDto) {

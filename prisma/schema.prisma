@@ -16,7 +16,7 @@ model User {
   isActive     Boolean   @default(false)
   codeId       String?
   codeExpired  DateTime?
-  refreshToken String?
+  refreshToken String?   @default("")
 
   @@map("users")
 }

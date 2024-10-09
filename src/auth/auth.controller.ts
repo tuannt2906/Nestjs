@@ -54,12 +54,18 @@ export class AuthController {
 
   @Post('activate')
   @Public()
-  async activateAccount(@Body('email') email: string, @Body('code') code: string) {
+  async activateAccount(
+    @Body('email') email: string,
+    @Body('code') code: string,
+  ) {
     const result = await this.authService.activateAccount(email, code);
-    if (!result) {
+    if (!result.isActive) {
       throw new BadRequestException('Invalid activation code or expired');
     }
-    return { message: 'Account activated successfully' };
+    return {
+      message: 'Account activated successfully',
+      refreshToken: result.refreshToken,
+    };
   }
 
   @Post('register')
