@@ -27,16 +27,14 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   handleRequest(err, user) {
     if (err || !user) {
-      throw (
-        err || new UnauthorizedException('Access Token is invalid or expired.')
-      );
+      throw err || new UnauthorizedException('Access Token is invalid or expired.');
     }
     return user;
   }
 
   async validateToken(token: string) {
     try {
-      const payload = this.jwtService.verify(token);
+      const payload = await this.jwtService.verifyAsync(token); // sử dụng verifyAsync
       return payload;
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired token');

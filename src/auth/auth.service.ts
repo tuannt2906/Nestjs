@@ -34,8 +34,6 @@ export class AuthService {
   async login(
     user: UserDTO,
   ): Promise<{ access_token: string; refresh_token: string }> {
-    console.log(user);
-
     const payload = { email: user.email, sub: user.id };
     const access_token = await this.jwtService.signAsync(payload, {
       expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRED,
