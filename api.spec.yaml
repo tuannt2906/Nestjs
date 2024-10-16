@@ -1,0 +1,213 @@
+openapi: 3.0.0
+info:
+  title: API Documentation
+  version: 1.0.0
+  description: Documentation for your API
+
+servers:
+  - url: http://localhost:8000/api/v1
+
+paths:
+  /auth/login:
+    post:
+      summary: User Login
+      description: API để đăng nhập người dùng.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "nguyentuan123.yeah@gmail.com"
+                password:
+                  type: string
+                  example: "Tuan@1234"
+      responses:
+        '200':
+          description: Successfully logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    example: "jwt.token.here"
+        '401':
+          description: Unauthorized
+
+  /auth/register:
+    post:
+      summary: User Registration
+      description: API để đăng ký người dùng mới.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "newuser"
+                email:
+                  type: string
+                  example: "newuser@example.com"
+                password:
+                  type: string
+                  example: "Password@123"
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    example: 1
+
+  /auth/activate:
+    post:
+      summary: Account Activation
+      description: API để kích hoạt tài khoản người dùng.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "newuser@example.com"
+                activationCode:
+                  type: string
+                  example: "123456"
+      responses:
+        '200':
+          description: Account activated successfully
+
+  /auth/change-password:
+    patch:
+      summary: Change User Password
+      description: API để thay đổi mật khẩu người dùng.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: "newPassword123"
+                confirmPassword:
+                  type: string
+                  example: "newPassword123"
+      responses:
+        '200':
+          description: Password changed successfully
+        '400':
+          description: Bad Request
+
+  /users:
+    get:
+      summary: Fetch all users
+      description: API để lấy tất cả người dùng.
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  /users/{id}:
+    get:
+      summary: Fetch user by ID
+      description: API để lấy thông tin người dùng qua ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /test-data:
+    get:
+      summary: Fetch test data with pagination
+      description: API để lấy dữ liệu test với phân trang.
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: List of test data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TestData'
+                  total:
+                    type: integer
+                  currentPage:
+                    type: integer
+                  totalPages:
+                    type: integer
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          example: "johndoe@example.com"
+
+    TestData:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        date:
+          type: string
+          format: date-time
+          example: "2024-08-22T19:14:45"
+        message:
+          type: string
+          example: "[TEST]"
+

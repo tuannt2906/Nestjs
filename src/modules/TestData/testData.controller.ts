@@ -5,12 +5,26 @@ import {
   HttpMessage,
   HttpStatus as GlobalHttpStatus,
 } from 'modules/global/globalEnum';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiQuery,
+} from '@nestjs/swagger';
+import { Public } from 'customs/customize';
 
+@ApiTags('test-data')
 @Controller('test-data')
 export class TestDataController {
   constructor(private readonly testDataService: TestDataService) {}
 
   @Get()
+  @Public()
+  @ApiOperation({ summary: 'Fetch test data with pagination' })
+  @ApiQuery({ name: 'page', required: false, description: 'Page number', type: Number, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, description: 'Number of items per page', type: Number, example: 10 })
+  @ApiResponse({ status: 200, description: 'Successful retrieval of test data', type: ResponseData })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async getTestData(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,

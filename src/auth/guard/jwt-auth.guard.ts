@@ -4,12 +4,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { IS_PUBLIC_KEY } from 'customs/customize';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  constructor(private reflector: Reflector) {
+  constructor(private reflector: Reflector, private jwtService: JwtService) {
     super();
   }
 
@@ -31,5 +32,14 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       );
     }
     return user;
+  }
+
+  async validateToken(token: string) {
+    try {
+      const payload = this.jwtService.verify(token);
+      return payload;
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
   }
 }

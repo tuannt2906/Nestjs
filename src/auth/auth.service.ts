@@ -13,6 +13,7 @@ import { ChangePasswordAuthDto } from './dto/auth.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
+import { log } from 'console';
 
 @Injectable()
 export class AuthService {
@@ -33,19 +34,22 @@ export class AuthService {
   async login(
     user: UserDTO,
   ): Promise<{ access_token: string; refresh_token: string }> {
+    console.log(user);
+
     const payload = { email: user.email, sub: user.id };
     const access_token = await this.jwtService.signAsync(payload, {
-      expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRED || '15m',
+      expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRED,
     });
     const refresh_token = await this.jwtService.signAsync(payload, {
-      expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRED || '7d',
+      expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRED,
     });
-
     await this.userService.updateUser(
-      { refreshToken: refresh_token },
+      {
+        refreshToken: refresh_token,
+        refreshTokenExpired: dayjs().add(7, 'days').toDate(),
+      },
       user.id as number,
     );
-
     return {
       access_token,
       refresh_token,
@@ -54,7 +58,7 @@ export class AuthService {
 
   async logout(userId: number): Promise<void> {
     await this.userService.clearRefreshToken(userId);
-  }  
+  }
 
   async register(registerDto: UserDTO): Promise<{ id: number }> {
     await this.checkUserExists(registerDto);
@@ -89,20 +93,42 @@ export class AuthService {
       const payload = this.jwtService.verify(refreshToken);
       const user = await this.userService.findUserByEmail(payload.email);
 
-      if (!user || user.refreshToken !== refreshToken) {
+      if (!user) {
         throw new UnauthorizedException('Invalid refresh token');
+      }
+
+      if (user.refreshToken !== refreshToken) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
+      const tokenExpired = dayjs().isAfter(user.refreshTokenExpired);
+
+      if (tokenExpired) {
+        throw new UnauthorizedException('Refresh token expired');
       }
 
       const access_token = this.jwtService.sign(
         { email: payload.email, sub: payload.sub },
-        { expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRED || '15m' },
+        { expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRED},
       );
 
-      const new_refresh_token = await this.jwtService.signAsync(payload, {
-        expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRED || '7d',
-      });
+      const new_refresh_token = await this.jwtService.signAsync(
+        {
+          email: payload.email,
+          sub: payload.sub,
+        },
+        {
+          expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRED,
+        },
+      );
 
-      await this.userService.saveRefreshToken(user.id, new_refresh_token);
+      await this.userService.updateUser(
+        {
+          refreshToken: new_refresh_token,
+          refreshTokenExpired: dayjs().add(7, 'days').toDate(),
+        },
+        user.id,
+      );
 
       return {
         access_token,
@@ -131,20 +157,43 @@ export class AuthService {
     const refreshToken = await this.jwtService.signAsync(payload, {
       expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRED,
     });
-    await this.userService.saveRefreshToken(userId, refreshToken);
+    await this.userService.updateUser(
+      {
+        refreshToken: refreshToken,
+        refreshTokenExpired: dayjs().add(7, 'days').toDate(),
+      },
+      userId,
+    );
     return refreshToken;
   }
 
-  async activateAccount(email: string, code: string): Promise<{ isActive: boolean; refreshToken: string | null }> {
+  async activateAccount(
+    email: string,
+    code: string,
+  ): Promise<{
+    isActive: boolean;
+    accessToken: string | null;
+    refreshToken: string | null;
+  }> {
     const user = await this.userService.findUserByEmail(email);
-  
     if (!user || user.codeId !== code || dayjs().isAfter(user.codeExpired)) {
-      return { isActive: false, refreshToken: null };
+      return { isActive: false, accessToken: null, refreshToken: null };
     }
-  
     await this.userService.updateUser({ isActive: true }, user.id);
     const refreshToken = await this.createRefreshToken(user.id);
-    return { isActive: true, refreshToken };
+    await this.userService.updateUser(
+      {
+        refreshToken: refreshToken,
+        refreshTokenExpired: dayjs().add(7, 'days').toDate(),
+      },
+      user.id,
+    );
+    const accessToken = this.jwtService.sign(
+      { email: user.email, sub: user.id },
+      { expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRED},
+    );
+
+    return { isActive: true, accessToken, refreshToken };
   }
 
   async changePassword(data: ChangePasswordAuthDto) {

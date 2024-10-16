@@ -49,4 +49,7 @@ export class UserDTO {
 
   @IsOptional()
   refreshToken?: string;
+
+  @IsOptional()
+  refreshTokenExpired?: Date;
 }
