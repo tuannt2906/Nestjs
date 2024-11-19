@@ -8,14 +8,22 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  username  String    @unique
-  password  String
-  email     String    @unique
-  deletedAt DateTime?
-  isActive  Boolean   @default(false)
-  codeId     String?  
-  codeExpired DateTime?
+  id                  Int       @id @default(autoincrement())
+  username            String    @unique
+  password            String
+  email               String    @unique
+  deletedAt           DateTime?
+  isActive            Boolean   @default(false)
+  codeId              String?   @db.Text
+  codeExpired         DateTime?
+  refreshToken        String?   @db.Text
+  refreshTokenExpired DateTime?
 
   @@map("users")
+}
+
+model TestData {
+  id      Int      @id
+  message String
+  date    DateTime @default(now())
 }

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `TestData` MODIFY `id` INTEGER NOT NULL;

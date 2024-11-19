@@ -21,12 +21,23 @@ import {
 } from 'modules/global/globalEnum';
 import { User } from '@prisma/client';
 import { UserDTO } from 'modules/users/dto/user.dto';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+} from '@nestjs/swagger';
+import { JwtAuthGuard } from 'auth/guard/jwt-auth.guard';
 
+@ApiTags('users')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Fetch all users' })
+  @ApiResponse({ status: 200, description: 'List of users', type: ResponseData })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async getUsers(): Promise<ResponseData<User[]>> {
     try {
       const users = await this.userService.getUsers();
@@ -48,6 +59,10 @@ export class UserController {
   }
 
   @Get('/:id')
+  @ApiOperation({ summary: 'Fetch user by ID' })
+  @ApiParam({ name: 'id', required: true, description: 'User ID', type: Number })
+  @ApiResponse({ status: 200, description: 'User detail', type: ResponseData })
+  @ApiResponse({ status: 404, description: 'User not found' })
   async detailUser(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<ResponseData<User>> {
@@ -67,6 +82,10 @@ export class UserController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create a new user' })
+  @ApiResponse({ status: 201, description: 'User created successfully', type: ResponseData })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async createUser(
     @Body(new ValidationPipe()) userDTO: UserDTO,
   ): Promise<ResponseData<User>> {
@@ -100,6 +119,12 @@ export class UserController {
   }
 
   @Put('/:id')
+  @ApiOperation({ summary: 'Update user by ID' })
+  @ApiParam({ name: 'id', required: true, description: 'User ID', type: Number })
+  @ApiResponse({ status: 200, description: 'User updated successfully', type: ResponseData })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async updateUser(
     @Body(new ValidationPipe()) userDTO: UserDTO,
     @Param('id', ParseIntPipe) id: number,
@@ -143,6 +168,11 @@ export class UserController {
   }
 
   @Delete('/:id')
+  @ApiOperation({ summary: 'Delete user by ID' })
+  @ApiParam({ name: 'id', required: true, description: 'User ID', type: Number })
+  @ApiResponse({ status: 204, description: 'User deleted successfully' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async deleteUser(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<ResponseData<void>> {
